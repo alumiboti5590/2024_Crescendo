@@ -1,8 +1,6 @@
-# MAXSwerve Java Template v2023.1
+# 2024 FIRST Crescendo Robot Code
 
-See [the online changelog](https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/CHANGELOG.md) for information about updates to the template that may have been released since you created your project.
-
-## Description
+Team 5590's 2024 FRC robot code for the FIRST Crescendo robot. The code is written in Java and is based off of [RevRobotic's MAXSwerve Robot template code](https://github.com/REVrobotics/MAXSwerve-Java-Template).
 
 A template project for an FRC swerve drivetrain that uses REV MAXSwerve Modules.
 
@@ -10,13 +8,6 @@ Note that this is meant to be used with a drivetrain composed of four MAXSwerve 
 
 To get started, make sure you have calibrated the zero offsets for the absolute encoders in the Hardware Client using the `Absolute Encoder` tab under the associated turning SPARK MAX devices.
 
-## Prerequisites
+The code is divided into several packages, each responsible for a different aspect of the robot function. This README document explains the function of each package, some of the variable naming conventions used, and setup instructions. Additional information about each specific class can be found in that class's `.java` file.
 
-* SPARK MAX Firmware v1.6.2 - Adds features that are required for swerve
-* REVLib v2023.1.2 - Includes APIs for the new firmware features
-
-## Configuration
-
-It is possible that this project will not work for your robot right out of the box. Various things like the CAN IDs, PIDF gains, chassis configuration, etc. must be determined for your own robot!
-
-These values can be adjusted in the `Constants.java` file.
+Note that terminal commands include the `$`, but should not be included int the command. They simply show that they are a terminal command and not programming code. Exclude the `$` when you run it.
