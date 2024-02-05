@@ -13,11 +13,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.controllers.XboxController;
+import frc.robot.subsystems.ClawSubsystem;
+import frc.robot.subsystems.ClawSubsystem.ClawMode;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -34,6 +36,7 @@ import java.util.List;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final ClawSubsystem m_clawClimber = new ClawSubsystem();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -56,6 +59,11 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, true),
             m_robotDrive));
+    
+    m_driverController.getBButtonTrigger().onTrue(new RunCommand(
+        () -> m_clawClimber.setLiftMode(ClawMode.RAISE), m_clawClimber));
+    m_driverController.getXButtonTrigger().onTrue(new RunCommand(
+        () -> m_clawClimber.setLiftMode(ClawMode.LOWER), m_clawClimber));
   }
 
   /**
