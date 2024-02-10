@@ -22,6 +22,7 @@ import frc.robot.controllers.XboxController;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.ClawSubsystem.ClawMode;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.NoteIntake;
 import java.util.List;
 
 /*
@@ -34,9 +35,11 @@ public class RobotContainer {
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final ClawSubsystem m_clawClimber = new ClawSubsystem();
+    private final NoteIntake m_noteIntake = new NoteIntake();
 
     // The driver's controller
     XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+    XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -64,6 +67,14 @@ public class RobotContainer {
         m_driverController
                 .getXButtonTrigger()
                 .onTrue(new RunCommand(() -> m_clawClimber.setLiftMode(ClawMode.LOWER), m_clawClimber));
+
+        m_noteIntake.setDefaultCommand(new RunCommand(() -> m_noteIntake.setIntake(0), m_noteIntake));
+        m_operatorController
+                .getYButtonTrigger()
+                .whileTrue(new RunCommand(() -> m_noteIntake.setIntake(.9), m_noteIntake));
+        m_operatorController
+                .getAButtonTrigger()
+                .whileTrue(new RunCommand(() -> m_noteIntake.setIntake(-.7), m_noteIntake));
     }
 
     /**
