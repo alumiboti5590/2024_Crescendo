@@ -63,6 +63,8 @@ public final class Constants {
 
     public static final class NoteIntakeConstants {
         public static final int kIntakeCanId = 7;
+        public static final double kIntakeSpeed = .9;
+        public static final double kExhaustSpeed = -.7;
     }
 
     public static final class ModuleConstants {

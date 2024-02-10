@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.NoteIntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.controllers.XboxController;
 import frc.robot.subsystems.ClawSubsystem;
@@ -48,33 +49,43 @@ public class RobotContainer {
         // Configure the button bindings
         configureButtonBindings();
 
+        // The left stick controls translation of the robot.
+        // Turning is controlled by the X axis of the right stick.
+        RunCommand swerveDriveCmd = new RunCommand(
+                () -> m_robotDrive.drive(
+                        -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                        -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                        -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                        true,
+                        true),
+                m_robotDrive);
+
         // Configure default commands
-        m_robotDrive.setDefaultCommand(
-                // The left stick controls translation of the robot.
-                // Turning is controlled by the X axis of the right stick.
-                new RunCommand(
-                        () -> m_robotDrive.drive(
-                                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                                true,
-                                true),
-                        m_robotDrive));
+        m_robotDrive.setDefaultCommand(swerveDriveCmd);
 
-        m_driverController
-                .getBButtonTrigger()
-                .onTrue(new RunCommand(() -> m_clawClimber.setLiftMode(ClawMode.RAISE), m_clawClimber));
-        m_driverController
-                .getXButtonTrigger()
-                .onTrue(new RunCommand(() -> m_clawClimber.setLiftMode(ClawMode.LOWER), m_clawClimber));
+        // Claw Climber Command Mappings
 
-        m_noteIntake.setDefaultCommand(new RunCommand(() -> m_noteIntake.setIntake(0), m_noteIntake));
-        m_operatorController
-                .getYButtonTrigger()
-                .whileTrue(new RunCommand(() -> m_noteIntake.setIntake(.9), m_noteIntake));
-        m_operatorController
-                .getAButtonTrigger()
-                .whileTrue(new RunCommand(() -> m_noteIntake.setIntake(-.7), m_noteIntake));
+        RunCommand clawRaiseCmd = new RunCommand(() -> m_clawClimber.setLiftMode(ClawMode.RAISE), m_clawClimber),
+                clawLowerCmd = new RunCommand(() -> m_clawClimber.setLiftMode(ClawMode.LOWER), m_clawClimber);
+
+        m_driverController.getBButtonTrigger().onTrue(clawRaiseCmd);
+        m_driverController.getXButtonTrigger().onTrue(clawLowerCmd);
+
+        // /end Claw Climber Command Mappings
+
+        // Intake Command Mappings
+
+        RunCommand stopIntakeCmd = new RunCommand(() -> m_noteIntake.setIntake(0), m_noteIntake),
+                forwardIntakeCmd =
+                        new RunCommand(() -> m_noteIntake.setIntake(NoteIntakeConstants.kIntakeSpeed), m_noteIntake),
+                reverseIntakeCmd =
+                        new RunCommand(() -> m_noteIntake.setIntake(NoteIntakeConstants.kExhaustSpeed), m_noteIntake);
+
+        m_noteIntake.setDefaultCommand(stopIntakeCmd);
+        m_operatorController.getYButtonTrigger().whileTrue(forwardIntakeCmd);
+        m_operatorController.getAButtonTrigger().whileTrue(reverseIntakeCmd);
+
+        // /end Intake Command Mappings
     }
 
     /**
