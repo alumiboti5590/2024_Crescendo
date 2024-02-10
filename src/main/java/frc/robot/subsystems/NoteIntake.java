@@ -13,7 +13,7 @@ public class NoteIntake extends SubsystemBase {
 
     public NoteIntake() {
         intakeMotor = new CANSparkMax(NoteIntakeConstants.kIntakeCanId, MotorType.kBrushed);
-        intakeMotor.setInverted(false);
+        intakeMotor.setInverted(NoteIntakeConstants.kInvertIntake);
         intakeMotor.setIdleMode(IdleMode.kBrake);
     }
 

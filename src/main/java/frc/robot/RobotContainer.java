@@ -18,12 +18,14 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.NoteIntakeConstants;
+import frc.robot.Constants.NoteLoaderConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.controllers.XboxController;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.ClawSubsystem.ClawMode;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.NoteIntake;
+import frc.robot.subsystems.NoteLoader;
 import java.util.List;
 
 /*
@@ -37,6 +39,7 @@ public class RobotContainer {
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final ClawSubsystem m_clawClimber = new ClawSubsystem();
     private final NoteIntake m_noteIntake = new NoteIntake();
+    private final NoteLoader m_noteLoader = new NoteLoader();
 
     // The driver's controller
     XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -63,6 +66,8 @@ public class RobotContainer {
         // Configure default commands
         m_robotDrive.setDefaultCommand(swerveDriveCmd);
 
+        // m_driverController.getAButtonTrigger().whileTrue(m_robotDrive.alignToAprilTag("0"));
+
         // Claw Climber Command Mappings
 
         RunCommand clawRaiseCmd = new RunCommand(() -> m_clawClimber.setLiftMode(ClawMode.RAISE), m_clawClimber),
@@ -86,6 +91,20 @@ public class RobotContainer {
         m_operatorController.getAButtonTrigger().whileTrue(reverseIntakeCmd);
 
         // /end Intake Command Mappings
+
+        // Loader Command Mappings
+
+        RunCommand stopLoaderCmd = new RunCommand(() -> m_noteLoader.setLoader(0), m_noteLoader),
+                forwardLoaderCmd =
+                        new RunCommand(() -> m_noteLoader.setLoader(NoteLoaderConstants.kIntakeSpeed), m_noteLoader),
+                reverseLoaderCmd =
+                        new RunCommand(() -> m_noteLoader.setLoader(NoteLoaderConstants.kExhaustSpeed), m_noteLoader);
+
+        m_noteLoader.setDefaultCommand(stopLoaderCmd);
+        m_operatorController.getXButtonTrigger().whileTrue(forwardLoaderCmd);
+        m_operatorController.getBButtonTrigger().whileTrue(reverseLoaderCmd);
+
+        // /end Loader Command Mappings
     }
 
     /**
