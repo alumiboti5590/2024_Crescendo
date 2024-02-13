@@ -75,6 +75,13 @@ public final class Constants {
         public static final double kExhaustSpeed = -.6;
     }
 
+    public static final class NoteShooterConstants {
+        public static final int kShootCanId = 8;
+        public static final boolean kInvertMotor = false;
+        public static final double kShootSpeed = .8;
+        public static final double kReverseSpeed = -.4;
+    }
+
     public static final class ModuleConstants {
         // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
         // This changes the drive speed of the module (a pinion gear with more teeth will result in a

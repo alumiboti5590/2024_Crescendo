@@ -19,6 +19,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.NoteIntakeConstants;
 import frc.robot.Constants.NoteLoaderConstants;
+import frc.robot.Constants.NoteShooterConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.controllers.XboxController;
 import frc.robot.subsystems.ClawSubsystem;
@@ -26,6 +27,7 @@ import frc.robot.subsystems.ClawSubsystem.ClawMode;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.NoteIntake;
 import frc.robot.subsystems.NoteLoader;
+import frc.robot.subsystems.NoteShooter;
 import java.util.List;
 
 /*
@@ -40,6 +42,7 @@ public class RobotContainer {
     private final ClawSubsystem m_clawClimber = new ClawSubsystem();
     private final NoteIntake m_noteIntake = new NoteIntake();
     private final NoteLoader m_noteLoader = new NoteLoader();
+    private final NoteShooter m_noteShooter = new NoteShooter();
 
     // The driver's controller
     XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -103,6 +106,17 @@ public class RobotContainer {
         m_noteLoader.setDefaultCommand(stopLoaderCmd);
         m_operatorController.getXButtonTrigger().whileTrue(forwardLoaderCmd);
         m_operatorController.getBButtonTrigger().whileTrue(reverseLoaderCmd);
+
+        RunCommand stopShooterCmd = new RunCommand(() -> m_noteShooter.setShooter(0), m_noteShooter),
+                forwardShooterCmd =
+                        new RunCommand(() -> m_noteShooter.setShooter(NoteShooterConstants.kShootSpeed), m_noteShooter),
+                reverseShooterCmd =
+                        new RunCommand(
+                                () -> m_noteShooter.setShooter(NoteShooterConstants.kReverseSpeed), m_noteShooter);
+
+        m_noteShooter.setDefaultCommand(stopShooterCmd);
+        m_operatorController.getStartButtonTrigger().whileTrue(forwardShooterCmd);
+        m_operatorController.getBackButtonTrigger().whileTrue(reverseShooterCmd);
 
         // /end Loader Command Mappings
     }

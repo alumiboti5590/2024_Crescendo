@@ -14,7 +14,7 @@ public class NoteLoader extends SubsystemBase {
     public NoteLoader() {
         loaderMotor = new CANSparkMax(NoteLoaderConstants.kLoaderCanId, MotorType.kBrushed);
         loaderMotor.setInverted(NoteLoaderConstants.kInvertLoad);
-        loaderMotor.setIdleMode(IdleMode.kBrake);
+        loaderMotor.setIdleMode(IdleMode.kCoast);
     }
 
     public void setLoader(double percent) {
