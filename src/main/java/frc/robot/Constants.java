@@ -80,6 +80,9 @@ public final class Constants {
         public static final boolean kInvertMotor = false;
         public static final double kShootSpeed = .8;
         public static final double kReverseSpeed = -.4;
+
+        public static final double kShootingEncoderPositionFactor = (2 * Math.PI); // radians
+        public static final double kShootingEncoderVelocityFactor = (2 * Math.PI) / 60.0; // radians per second
     }
 
     public static final class ModuleConstants {
