@@ -107,12 +107,12 @@ public class RobotContainer {
         m_operatorController.getXButtonTrigger().whileTrue(forwardLoaderCmd);
         m_operatorController.getBButtonTrigger().whileTrue(reverseLoaderCmd);
 
-        RunCommand stopShooterCmd = new RunCommand(() -> m_noteShooter.setShooter(0), m_noteShooter),
+        RunCommand stopShooterCmd = new RunCommand(() -> m_noteShooter.setShooterPercent(0), m_noteShooter),
                 forwardShooterCmd =
-                        new RunCommand(() -> m_noteShooter.setShooter(NoteShooterConstants.kShootSpeed), m_noteShooter),
+                        new RunCommand(() -> m_noteShooter.setShooterPercent(Constants.NoteShooterConstants.kShootSpeed), m_noteShooter),
                 reverseShooterCmd =
                         new RunCommand(
-                                () -> m_noteShooter.setShooter(NoteShooterConstants.kReverseSpeed), m_noteShooter);
+                                () -> m_noteShooter.setShooterPercent(Constants.NoteShooterConstants.kReverseSpeed), m_noteShooter);
 
         m_noteShooter.setDefaultCommand(stopShooterCmd);
         m_operatorController.getStartButtonTrigger().whileTrue(forwardShooterCmd);

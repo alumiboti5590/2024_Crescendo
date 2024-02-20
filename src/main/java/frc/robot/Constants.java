@@ -62,24 +62,24 @@ public final class Constants {
     }
 
     public static final class NoteIntakeConstants {
-        public static final int kIntakeCanId = 7;
+        public static final int kIntakeCanId = 8;
         public static final boolean kInvertIntake = false;
         public static final double kIntakeSpeed = .9;
-        public static final double kExhaustSpeed = -.7;
+        public static final double kExhaustSpeed = -.3;
     }
 
     public static final class NoteLoaderConstants {
-        public static final int kLoaderCanId = 6;
-        public static final boolean kInvertLoad = false;
-        public static final double kIntakeSpeed = .6;
-        public static final double kExhaustSpeed = -.6;
+        public static final int kLoaderCanId = 7;
+        public static final boolean kInvertLoad = true;
+        public static final double kIntakeSpeed = .4;
+        public static final double kExhaustSpeed = -.2;
     }
 
     public static final class NoteShooterConstants {
-        public static final int kShootCanId = 8;
-        public static final boolean kInvertMotor = false;
-        public static final double kShootSpeed = .8;
-        public static final double kReverseSpeed = -.4;
+        public static final int kShootCanId = 6;
+        public static final boolean kInvertMotor = true;
+        public static final double kShootSpeed = 1.0;
+        public static final double kReverseSpeed = -.1;
     }
 
     public static final class ModuleConstants {
