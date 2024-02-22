@@ -20,6 +20,8 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final String SHUFFLEBOARD_TAB = "Default";
+
     public static final class DriveConstants {
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
@@ -61,25 +63,34 @@ public final class Constants {
         public static final boolean kGyroReversed = false;
     }
 
-    public static final class NoteIntakeConstants {
+    public static final class IntakeConstants {
         public static final int kIntakeCanId = 8;
         public static final boolean kInvertIntake = false;
         public static final double kIntakeSpeed = .9;
         public static final double kExhaustSpeed = -.3;
     }
 
-    public static final class NoteLoaderConstants {
+    public static final class LoaderConstants {
         public static final int kLoaderCanId = 7;
         public static final boolean kInvertLoad = true;
         public static final double kIntakeSpeed = .4;
+        public static final double kLoadShooterSpeed = .6;
         public static final double kExhaustSpeed = -.2;
+
+        public static final int kSwitchId = 0;
     }
 
-    public static final class NoteShooterConstants {
+    public static final class ShooterConstants {
         public static final int kShootCanId = 6;
-        public static final boolean kInvertMotor = true;
-        public static final double kShootSpeed = 1.0;
+        public static final boolean kInvertMotor = false;
+        public static final double kShootSpeakerSpeed = 1;
         public static final double kReverseSpeed = -.1;
+    }
+
+    public static final class ClimberConstants {
+        public static final int kCanId = 5;
+        public static final boolean kInvertMotor = false;
+        public static final double kClimbSpeed = 1;
     }
 
     public static final class ModuleConstants {

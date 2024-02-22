@@ -12,22 +12,24 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.NoteIntakeConstants;
-import frc.robot.Constants.NoteLoaderConstants;
-import frc.robot.Constants.NoteShooterConstants;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.LoaderConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.controllers.XboxController;
-import frc.robot.subsystems.ClawSubsystem;
-import frc.robot.subsystems.ClawSubsystem.ClawMode;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.NoteIntake;
-import frc.robot.subsystems.NoteLoader;
-import frc.robot.subsystems.NoteShooter;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Loader;
+import frc.robot.subsystems.Shooter;
 import java.util.List;
 
 /*
@@ -37,16 +39,18 @@ import java.util.List;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    // The robot's subsystems
-    private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-    private final ClawSubsystem m_clawClimber = new ClawSubsystem();
-    private final NoteIntake m_noteIntake = new NoteIntake();
-    private final NoteLoader m_noteLoader = new NoteLoader();
-    private final NoteShooter m_noteShooter = new NoteShooter();
+    private static final double ZERO = 0.0;
+
+    private final DriveSubsystem robotDrive = new DriveSubsystem();
+    //     private final ClawSubsystem clawClimber = new ClawSubsystem();
+    private final Climber climber = new Climber();
+    private final Intake intake = new Intake();
+    private final Loader loader = new Loader();
+    private final Shooter shooter = new Shooter();
 
     // The driver's controller
-    XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-    XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
+    XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
+    XboxController operatorController = new XboxController(OIConstants.kOperatorControllerPort);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -58,67 +62,14 @@ public class RobotContainer {
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         RunCommand swerveDriveCmd = new RunCommand(
-                () -> m_robotDrive.drive(
-                        -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                        -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                        -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                () -> robotDrive.drive(
+                        -MathUtil.applyDeadband(driverController.getLeftY(), OIConstants.kDriveDeadband),
+                        -MathUtil.applyDeadband(driverController.getLeftX(), OIConstants.kDriveDeadband),
+                        -MathUtil.applyDeadband(driverController.getRightX(), OIConstants.kDriveDeadband),
                         true,
                         true),
-                m_robotDrive);
-
-        // Configure default commands
-        m_robotDrive.setDefaultCommand(swerveDriveCmd);
-
-        // m_driverController.getAButtonTrigger().whileTrue(m_robotDrive.alignToAprilTag("0"));
-
-        // Claw Climber Command Mappings
-
-        RunCommand clawRaiseCmd = new RunCommand(() -> m_clawClimber.setLiftMode(ClawMode.RAISE), m_clawClimber),
-                clawLowerCmd = new RunCommand(() -> m_clawClimber.setLiftMode(ClawMode.LOWER), m_clawClimber);
-
-        m_driverController.getBButtonTrigger().onTrue(clawRaiseCmd);
-        m_driverController.getXButtonTrigger().onTrue(clawLowerCmd);
-
-        // /end Claw Climber Command Mappings
-
-        // Intake Command Mappings
-
-        RunCommand stopIntakeCmd = new RunCommand(() -> m_noteIntake.setIntake(0), m_noteIntake),
-                forwardIntakeCmd =
-                        new RunCommand(() -> m_noteIntake.setIntake(NoteIntakeConstants.kIntakeSpeed), m_noteIntake),
-                reverseIntakeCmd =
-                        new RunCommand(() -> m_noteIntake.setIntake(NoteIntakeConstants.kExhaustSpeed), m_noteIntake);
-
-        m_noteIntake.setDefaultCommand(stopIntakeCmd);
-        m_operatorController.getYButtonTrigger().whileTrue(forwardIntakeCmd);
-        m_operatorController.getAButtonTrigger().whileTrue(reverseIntakeCmd);
-
-        // /end Intake Command Mappings
-
-        // Loader Command Mappings
-
-        RunCommand stopLoaderCmd = new RunCommand(() -> m_noteLoader.setLoader(0), m_noteLoader),
-                forwardLoaderCmd =
-                        new RunCommand(() -> m_noteLoader.setLoader(NoteLoaderConstants.kIntakeSpeed), m_noteLoader),
-                reverseLoaderCmd =
-                        new RunCommand(() -> m_noteLoader.setLoader(NoteLoaderConstants.kExhaustSpeed), m_noteLoader);
-
-        m_noteLoader.setDefaultCommand(stopLoaderCmd);
-        m_operatorController.getXButtonTrigger().whileTrue(forwardLoaderCmd);
-        m_operatorController.getBButtonTrigger().whileTrue(reverseLoaderCmd);
-
-        RunCommand stopShooterCmd = new RunCommand(() -> m_noteShooter.setShooter(0), m_noteShooter),
-                forwardShooterCmd =
-                        new RunCommand(() -> m_noteShooter.setShooter(Constants.NoteShooterConstants.kShootSpeed), m_noteShooter),
-                reverseShooterCmd =
-                        new RunCommand(
-                                () -> m_noteShooter.setShooter(Constants.NoteShooterConstants.kReverseSpeed), m_noteShooter);
-
-        m_noteShooter.setDefaultCommand(stopShooterCmd);
-        m_operatorController.getStartButtonTrigger().whileTrue(forwardShooterCmd);
-        m_operatorController.getBackButtonTrigger().whileTrue(reverseShooterCmd);
-
-        // /end Loader Command Mappings
+                robotDrive);
+        robotDrive.setDefaultCommand(swerveDriveCmd);
     }
 
     /**
@@ -131,8 +82,52 @@ public class RobotContainer {
      * {@link JoystickButton}.
      */
     private void configureButtonBindings() {
-        new JoystickButton(m_driverController, Button.kR1.value)
-                .whileTrue(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive));
+        new JoystickButton(driverController, Button.kR1.value)
+                .whileTrue(new RunCommand(() -> robotDrive.setX(), robotDrive));
+
+        // Basic Actions that the robot can take
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Runnable startIntake = () -> intake.set(IntakeConstants.kIntakeSpeed),
+                startIntakeLoader = () -> loader.set(LoaderConstants.kIntakeSpeed),
+                startShooterLoader = () -> loader.set(LoaderConstants.kLoadShooterSpeed),
+                stopIntake = () -> intake.set(ZERO),
+                stopLoader = () -> loader.set(ZERO),
+                startShooter = () -> shooter.set(ShooterConstants.kShootSpeakerSpeed),
+                stopShooter = () -> shooter.set(ZERO),
+                reverseShooter = () -> shooter.set(ShooterConstants.kReverseSpeed),
+                startClimb = () -> climber.set(ClimberConstants.kClimbSpeed),
+                stopClimb = () -> climber.set(ZERO);
+
+        // Actions that combine to form sequences and Commands
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        // Start the intake and the loader to pick up notes off the ground
+        Command startGroundIntake = run(startIntake, intake)
+                .alongWith(run(startIntakeLoader, loader))
+                .unless(loader::isNoteLoaded);
+        // Stop the intake and feeder at the same time
+        Command stopGroundIntake = Commands.parallel(run(stopIntake, intake), run(stopLoader, loader))
+                .withTimeout(.1)
+                // Backfeed the shooter for a moment to prevent the note from getting
+                // stuck before launching it.
+                .andThen(run(reverseShooter, shooter).withTimeout(.2))
+                .andThen(run(stopShooter, shooter));
+
+        // Start the shooter for a moment to spin up, then spin the loader to feed the note
+        Command shootSequenceCmd = run(startShooter, shooter).withTimeout(.7).andThen(run(startShooterLoader, loader));
+        // Stop both the shooter and the feeder
+        Command stopShooterCmd = run(stopShooter, shooter).alongWith(run(stopLoader, loader));
+
+        // Loading from feeder system
+        operatorController.getYButtonTrigger().onTrue(startGroundIntake);
+        operatorController.getYButtonTrigger().onFalse(stopGroundIntake);
+
+        operatorController.getStartButtonTrigger().onTrue(shootSequenceCmd);
+        operatorController.getStartButtonTrigger().onFalse(stopShooterCmd);
+        operatorController.getBackButtonTrigger().onTrue(run(stopShooter, shooter));
+
+        driverController.getStartButtonTrigger().onTrue(run(startClimb, climber));
+        driverController.getStartButtonTrigger().onFalse(run(stopClimb, climber));
     }
 
     /**
@@ -163,20 +158,24 @@ public class RobotContainer {
 
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
                 exampleTrajectory,
-                m_robotDrive::getPose, // Functional interface to feed supplier
+                robotDrive::getPose, // Functional interface to feed supplier
                 DriveConstants.kDriveKinematics,
 
                 // Position controllers
                 new PIDController(AutoConstants.kPXController, 0, 0),
                 new PIDController(AutoConstants.kPYController, 0, 0),
                 thetaController,
-                m_robotDrive::setModuleStates,
-                m_robotDrive);
+                robotDrive::setModuleStates,
+                robotDrive);
 
         // Reset odometry to the starting pose of the trajectory.
-        m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+        robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
         // Run path following command, then stop at the end.
-        return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+        return swerveControllerCommand.andThen(() -> robotDrive.drive(0, 0, 0, false, false));
+    }
+
+    private static Command run(Runnable action, Subsystem... subsystems) {
+        return new RunCommand(action, subsystems);
     }
 }
