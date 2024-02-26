@@ -1,6 +1,7 @@
 /* 2024 Written by Alumiboti FRC 5590 */
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -56,6 +57,8 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+        CameraServer.startAutomaticCapture();
+
         // Configure the button bindings
         configureButtonBindings();
 
@@ -90,9 +93,11 @@ public class RobotContainer {
         Runnable startIntake = () -> intake.set(IntakeConstants.kIntakeSpeed),
                 startIntakeLoader = () -> loader.set(LoaderConstants.kIntakeSpeed),
                 startShooterLoader = () -> loader.set(LoaderConstants.kLoadShooterSpeed),
+                reverseLoader = () -> loader.set(LoaderConstants.kExhaustSpeed),
                 stopIntake = () -> intake.set(ZERO),
                 stopLoader = () -> loader.set(ZERO),
-                startShooter = () -> shooter.set(ShooterConstants.kShootSpeakerSpeed),
+                startShooterAmp = () -> shooter.set(ShooterConstants.kShootAmpSpeed),
+                startShooterSpeaker = () -> shooter.set(ShooterConstants.kShootSpeakerSpeed),
                 stopShooter = () -> shooter.set(ZERO),
                 reverseShooter = () -> shooter.set(ShooterConstants.kReverseSpeed),
                 startClimb = () -> climber.set(ClimberConstants.kClimbSpeed),
@@ -103,18 +108,19 @@ public class RobotContainer {
 
         // Start the intake and the loader to pick up notes off the ground
         Command startGroundIntake = run(startIntake, intake)
-                .alongWith(run(startIntakeLoader, loader))
-                .unless(loader::isNoteLoaded);
+                .alongWith(run(startIntakeLoader, loader));
+                // .unless(loader::isNoteLoaded);
         // Stop the intake and feeder at the same time
         Command stopGroundIntake = Commands.parallel(run(stopIntake, intake), run(stopLoader, loader))
                 .withTimeout(.1)
                 // Backfeed the shooter for a moment to prevent the note from getting
                 // stuck before launching it.
-                .andThen(run(reverseShooter, shooter).withTimeout(.2))
-                .andThen(run(stopShooter, shooter));
+                .andThen(run(reverseShooter, shooter).alongWith(run(reverseLoader, loader)).withTimeout(.1))
+                .andThen(run(stopShooter, shooter).alongWith(run(stopLoader, loader)));
 
         // Start the shooter for a moment to spin up, then spin the loader to feed the note
-        Command shootSequenceCmd = run(startShooter, shooter).withTimeout(.7).andThen(run(startShooterLoader, loader));
+        Command shootSpeakerSequenceCmd = run(startShooterSpeaker, shooter).withTimeout(1).andThen(run(startShooterLoader, loader));
+        Command shootAmpSequenceCmd = run(startShooterAmp, shooter).withTimeout(.5).andThen(run(startShooterLoader, loader));
         // Stop both the shooter and the feeder
         Command stopShooterCmd = run(stopShooter, shooter).alongWith(run(stopLoader, loader));
 
@@ -122,9 +128,11 @@ public class RobotContainer {
         operatorController.getYButtonTrigger().onTrue(startGroundIntake);
         operatorController.getYButtonTrigger().onFalse(stopGroundIntake);
 
-        operatorController.getStartButtonTrigger().onTrue(shootSequenceCmd);
-        operatorController.getStartButtonTrigger().onFalse(stopShooterCmd);
-        operatorController.getBackButtonTrigger().onTrue(run(stopShooter, shooter));
+        operatorController.getLeftBumperTrigger().onTrue(shootSpeakerSequenceCmd);
+        operatorController.getLeftBumperTrigger().onFalse(stopShooterCmd);
+
+        operatorController.getRightBumperTrigger().onTrue(shootAmpSequenceCmd);
+        operatorController.getRightBumperTrigger().onFalse(stopShooterCmd);
 
         driverController.getStartButtonTrigger().onTrue(run(startClimb, climber));
         driverController.getStartButtonTrigger().onFalse(run(stopClimb, climber));
