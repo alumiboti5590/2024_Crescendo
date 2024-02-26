@@ -107,20 +107,23 @@ public class RobotContainer {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         // Start the intake and the loader to pick up notes off the ground
-        Command startGroundIntake = run(startIntake, intake)
-                .alongWith(run(startIntakeLoader, loader));
-                // .unless(loader::isNoteLoaded);
+        Command startGroundIntake = run(startIntake, intake).alongWith(run(startIntakeLoader, loader));
+        // .unless(loader::isNoteLoaded);
         // Stop the intake and feeder at the same time
         Command stopGroundIntake = Commands.parallel(run(stopIntake, intake), run(stopLoader, loader))
                 .withTimeout(.1)
                 // Backfeed the shooter for a moment to prevent the note from getting
                 // stuck before launching it.
-                .andThen(run(reverseShooter, shooter).alongWith(run(reverseLoader, loader)).withTimeout(.1))
+                .andThen(run(reverseShooter, shooter)
+                        .alongWith(run(reverseLoader, loader))
+                        .withTimeout(.1))
                 .andThen(run(stopShooter, shooter).alongWith(run(stopLoader, loader)));
 
         // Start the shooter for a moment to spin up, then spin the loader to feed the note
-        Command shootSpeakerSequenceCmd = run(startShooterSpeaker, shooter).withTimeout(1).andThen(run(startShooterLoader, loader));
-        Command shootAmpSequenceCmd = run(startShooterAmp, shooter).withTimeout(.5).andThen(run(startShooterLoader, loader));
+        Command shootSpeakerSequenceCmd =
+                run(startShooterSpeaker, shooter).withTimeout(1).andThen(run(startShooterLoader, loader));
+        Command shootAmpSequenceCmd =
+                run(startShooterAmp, shooter).withTimeout(.5).andThen(run(startShooterLoader, loader));
         // Stop both the shooter and the feeder
         Command stopShooterCmd = run(stopShooter, shooter).alongWith(run(stopLoader, loader));
 
