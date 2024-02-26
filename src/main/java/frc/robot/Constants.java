@@ -85,6 +85,20 @@ public final class Constants {
         public static final double kShootingEncoderVelocityFactor = (2 * Math.PI) / 60.0; // radians per second
     }
 
+    public static final class TargetConstants {
+        // distance from the center of the Limelight lens to the floor
+        public static final double kLimelightLensHeight = 24.5;
+
+        // how many degrees back is your limelight rotated from perfectly vertical?
+        public static final double kLimelightLensAngle = 45;
+
+        // distance from the target to the floor
+        public static final double kSpeakerTagHeight = 55.125;
+
+        // distance [Goal] from the target to the limelight
+        public static final double kSpeakerRobotDistance = 50;
+    }
+
     public static final class ModuleConstants {
         // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
         // This changes the drive speed of the module (a pinion gear with more teeth will result in a
