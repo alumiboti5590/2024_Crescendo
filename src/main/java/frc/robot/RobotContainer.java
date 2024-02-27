@@ -28,6 +28,8 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.controllers.XboxController;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Hook;
+import frc.robot.subsystems.Hook.HookMode;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Loader;
 import frc.robot.subsystems.Shooter;
@@ -43,7 +45,7 @@ public class RobotContainer {
     private static final double ZERO = 0.0;
 
     private final DriveSubsystem robotDrive = new DriveSubsystem();
-    //     private final ClawSubsystem clawClimber = new ClawSubsystem();
+    private final Hook hook = new Hook();
     private final Climber climber = new Climber();
     private final Intake intake = new Intake();
     private final Loader loader = new Loader();
@@ -101,7 +103,9 @@ public class RobotContainer {
                 stopShooter = () -> shooter.set(ZERO),
                 reverseShooter = () -> shooter.set(ShooterConstants.kReverseSpeed),
                 startClimb = () -> climber.set(ClimberConstants.kClimbSpeed),
-                stopClimb = () -> climber.set(ZERO);
+                stopClimb = () -> climber.set(ZERO),
+                extendHook = () -> hook.set(HookMode.EXTEND),
+                retractHook = () -> hook.set(HookMode.RETRACT);
 
         // Actions that combine to form sequences and Commands
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -139,6 +143,9 @@ public class RobotContainer {
 
         driverController.getStartButtonTrigger().onTrue(run(startClimb, climber));
         driverController.getStartButtonTrigger().onFalse(run(stopClimb, climber));
+
+        driverController.getLeftBumperTrigger().onTrue(run(extendHook, hook));
+        driverController.getRightBumperTrigger().onTrue(run(retractHook, hook));
     }
 
     /**
