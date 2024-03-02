@@ -131,6 +131,12 @@ public class RobotContainer {
         // Stop both the shooter and the feeder
         Command stopShooterCmd = run(stopShooter, shooter).alongWith(run(stopLoader, loader));
 
+        // Stop the loader
+        Command stopLoaderCmd = run(stopLoader, loader);
+
+        // Reverse the loader
+        Command reverseLoaderCmd = run(reverseLoader, loader);
+
         // Loading from feeder system
         operatorController.getYButtonTrigger().onTrue(startGroundIntake);
         operatorController.getYButtonTrigger().onFalse(stopGroundIntake);
@@ -141,11 +147,14 @@ public class RobotContainer {
         operatorController.getRightBumperTrigger().onTrue(shootAmpSequenceCmd);
         operatorController.getRightBumperTrigger().onFalse(stopShooterCmd);
 
+        operatorController.getBButtonTrigger().onTrue(reverseLoaderCmd);
+        operatorController.getBButtonTrigger().onFalse(stopLoaderCmd);
+
         driverController.getStartButtonTrigger().onTrue(run(startClimb, climber));
         driverController.getStartButtonTrigger().onFalse(run(stopClimb, climber));
 
-        driverController.getLeftBumperTrigger().onTrue(run(extendHook, hook));
-        driverController.getRightBumperTrigger().onTrue(run(retractHook, hook));
+        driverController.getXButtonTrigger().onTrue(run(extendHook, hook));
+        driverController.getYButtonTrigger().onTrue(run(retractHook, hook));
     }
 
     /**

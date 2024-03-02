@@ -64,8 +64,8 @@ public final class Constants {
     }
 
     public static final class HookConstants {
-        public static final int kForwardCanChannel = 0;
-        public static final int kReverseCanChannel = 1;
+        public static final int kForwardCanChannel = 1;
+        public static final int kReverseCanChannel = 2;
         public static final boolean kSolenoidInverted = false;
     }
 
