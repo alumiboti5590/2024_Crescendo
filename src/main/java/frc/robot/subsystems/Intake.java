@@ -12,7 +12,7 @@ public class Intake extends SubsystemBase {
     private CANSparkMax motor;
 
     public Intake() {
-        motor = new CANSparkMax(IntakeConstants.kIntakeCanId, MotorType.kBrushed);
+        motor = new CANSparkMax(IntakeConstants.kIntakeCanId, MotorType.kBrushless);
         motor.setInverted(IntakeConstants.kInvertIntake);
         motor.setIdleMode(IdleMode.kBrake);
     }
