@@ -1,10 +1,9 @@
 /* 2024 Written by Alumiboti FRC 5590 */
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HookConstants;
 
@@ -22,8 +21,6 @@ public class Hook extends SubsystemBase {
 
     public Hook() {
         PneumaticHub pneumHub = new PneumaticHub(HookConstants.kPneumaticsCanId);
-        //this.solenoid = new DoubleSolenoid(
-        //        PneumaticsModuleType.REVPH, HookConstants.kForwardCanChannel, HookConstants.kReverseCanChannel);
         this.solenoid = pneumHub.makeDoubleSolenoid(HookConstants.kForwardCanChannel, HookConstants.kReverseCanChannel);
         this.solenoid.set(Value.kOff);
 
