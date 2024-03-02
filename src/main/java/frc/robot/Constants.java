@@ -99,6 +99,7 @@ public final class Constants {
         public static final int kCanId = 5;
         public static final boolean kInvertMotor = false;
         public static final double kClimbSpeed = 1;
+        public static final double kDispenseSpeed = -0.8;
     }
 
     public static final class ModuleConstants {

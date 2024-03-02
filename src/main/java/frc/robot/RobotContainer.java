@@ -104,6 +104,7 @@ public class RobotContainer {
                 reverseShooter = () -> shooter.set(ShooterConstants.kReverseSpeed),
                 startClimb = () -> climber.set(ClimberConstants.kClimbSpeed),
                 stopClimb = () -> climber.set(ZERO),
+                reverseClimb = () -> climber.set(ClimberConstants.kDispenseSpeed),
                 extendHook = () -> hook.set(HookMode.EXTEND),
                 retractHook = () -> hook.set(HookMode.RETRACT);
 
@@ -137,6 +138,15 @@ public class RobotContainer {
         // Reverse the loader
         Command reverseLoaderCmd = run(reverseLoader, loader);
 
+        // Start the climber
+        Command startClimberCmd = run(startClimb, climber);
+
+        // Stop the climber
+        Command stopClimberCmd = run(stopClimb, climber);
+
+        // Reverse the climber
+        Command reverseClimberCmd = run(reverseClimb, climber);
+
         // Loading from feeder system
         operatorController.getYButtonTrigger().onTrue(startGroundIntake);
         operatorController.getYButtonTrigger().onFalse(stopGroundIntake);
@@ -150,8 +160,11 @@ public class RobotContainer {
         operatorController.getBButtonTrigger().onTrue(reverseLoaderCmd);
         operatorController.getBButtonTrigger().onFalse(stopLoaderCmd);
 
-        driverController.getStartButtonTrigger().onTrue(run(startClimb, climber));
-        driverController.getStartButtonTrigger().onFalse(run(stopClimb, climber));
+        driverController.getStartButtonTrigger().onTrue(startClimberCmd);
+        driverController.getStartButtonTrigger().onFalse(stopClimberCmd);
+
+        driverController.getBackButtonTrigger().onTrue(reverseClimberCmd);
+        driverController.getBackButtonTrigger().onFalse(stopClimberCmd);
 
         driverController.getXButtonTrigger().onTrue(run(extendHook, hook));
         driverController.getYButtonTrigger().onTrue(run(retractHook, hook));
