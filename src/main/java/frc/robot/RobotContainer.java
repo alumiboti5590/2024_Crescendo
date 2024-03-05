@@ -28,6 +28,8 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.controllers.XboxController;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Flappy;
+import frc.robot.subsystems.Flappy.FlappyMode;
 import frc.robot.subsystems.Hook;
 import frc.robot.subsystems.Hook.HookMode;
 import frc.robot.subsystems.Intake;
@@ -50,6 +52,7 @@ public class RobotContainer {
     private final Intake intake = new Intake();
     private final Loader loader = new Loader();
     private final Shooter shooter = new Shooter();
+    private final Flappy flappy = new Flappy();
 
     // The driver's controller
     XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -106,7 +109,9 @@ public class RobotContainer {
                 stopClimb = () -> climber.set(ZERO),
                 reverseClimb = () -> climber.set(ClimberConstants.kDispenseSpeed),
                 extendHook = () -> hook.set(HookMode.EXTEND),
-                retractHook = () -> hook.set(HookMode.RETRACT);
+                retractHook = () -> hook.set(HookMode.RETRACT),
+                extendFlappy = () -> flappy.set(FlappyMode.EXTEND),
+                retractFlappy = () -> flappy.set(FlappyMode.RETRACT);
 
         // Actions that combine to form sequences and Commands
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -159,6 +164,9 @@ public class RobotContainer {
 
         operatorController.getBButtonTrigger().onTrue(reverseLoaderCmd);
         operatorController.getBButtonTrigger().onFalse(stopLoaderCmd);
+
+        operatorController.getXButtonTrigger().onTrue(run(extendFlappy, flappy));
+        operatorController.getAButtonTrigger().onTrue(run(retractFlappy, flappy));
 
         driverController.getStartButtonTrigger().onTrue(startClimberCmd);
         driverController.getStartButtonTrigger().onFalse(stopClimberCmd);
