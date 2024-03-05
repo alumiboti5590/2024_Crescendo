@@ -70,6 +70,11 @@ public final class Constants {
         public static final boolean kSolenoidInverted = false;
     }
 
+    public static final class FlappyConstants {
+        public static final int kForwardCanChannel = 3;
+        public static final int kReverseCanChannel = 4;
+    }
+
     public static final class IntakeConstants {
         public static final int kIntakeCanId = 8;
         public static final boolean kInvertIntake = false;
@@ -90,7 +95,7 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final int kShootCanId = 6;
         public static final boolean kInvertMotor = false;
-        public static final double kShootAmpSpeed = .37;
+        public static final double kShootAmpSpeed = .6;
         public static final double kShootSpeakerSpeed = 1;
         public static final double kReverseSpeed = -.1;
     }
