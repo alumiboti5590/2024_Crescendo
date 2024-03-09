@@ -65,14 +65,14 @@ public final class Constants {
 
     public static final class HookConstants {
         public static final int kPneumaticsCanId = 31;
-        public static final int kForwardCanChannel = 1;
-        public static final int kReverseCanChannel = 2;
+        public static final int kForwardCanChannel = 2;
+        public static final int kReverseCanChannel = 1;
         public static final boolean kSolenoidInverted = false;
     }
 
     public static final class FlappyConstants {
-        public static final int kForwardCanChannel = 3;
-        public static final int kReverseCanChannel = 4;
+        public static final int kForwardCanChannel = 4;
+        public static final int kReverseCanChannel = 3;
     }
 
     public static final class IntakeConstants {
