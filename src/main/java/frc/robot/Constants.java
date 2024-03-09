@@ -95,7 +95,7 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final int kShootCanId = 6;
         public static final boolean kInvertMotor = false;
-        public static final double kShootAmpSpeed = .6;
+        public static final double kShootAmpSpeed = .33;
         public static final double kShootSpeakerSpeed = 1;
         public static final double kReverseSpeed = -.1;
     }
