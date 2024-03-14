@@ -1,0 +1,68 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.6744365529691514,
+        "y": 4.0974387474904885
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.3018260143158704,
+        "y": 4.257872087424966
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.0379962158229405,
+        "y": 4.740358474361017
+      },
+      "prevControl": {
+        "x": 2.123167297090029,
+        "y": 4.534025977326538
+      },
+      "nextControl": {
+        "x": 1.952258375738503,
+        "y": 4.948063981579941
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.0379962158229405,
+        "y": 5.550327819405639
+      },
+      "prevControl": {
+        "x": 1.9701907712431244,
+        "y": 5.299091764320535
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "TwoNoteCenter",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

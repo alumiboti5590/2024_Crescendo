@@ -4,6 +4,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.LoaderConstants;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 public class CommandBuilder {
     private static final double ZERO = 0.0;
+    private static final double SPEAKER_SPIN_UP_TIME = 1;
 
     private final SwerveDrive swerveDrive = new SwerveDrive();
     private final Hook hook = new Hook();
@@ -151,7 +153,7 @@ public class CommandBuilder {
                 .withTimeout(.1)
                 // Backfeed the shooter for a moment to prevent the note from getting
                 // stuck before launching it.
-                .andThen(reverseShooter().alongWith(reverseLoader()).withTimeout(.1))
+                .andThen(reverseShooter().alongWith(reverseLoader()).withTimeout(.2))
                 .andThen(stopShooter().alongWith(stopLoader()));
     }
 
@@ -160,11 +162,37 @@ public class CommandBuilder {
     }
 
     public Command shootSpeakerSequence() {
-        return startShooterForSpeaker().withTimeout(1).andThen(startLoaderForShooter());
+        return startShooterForSpeaker()
+                .withTimeout(SPEAKER_SPIN_UP_TIME)
+                .andThen(startLoaderForShooter())
+                .withTimeout(SPEAKER_SPIN_UP_TIME + .1);
     }
 
     public Command stopShootSequence() {
         return stopShooter().alongWith(stopLoader());
+    }
+
+    // ~~~~~~~~~~~~
+    // Auto Actions
+    // ~~~~~~~~~~~~
+
+    public Command autoShootSpeakerSequence() {
+        return (this.shootSpeakerSequence()
+                        .withTimeout(SPEAKER_SPIN_UP_TIME + .3)
+                        .andThen(new WaitCommand(.1)))
+                .withTimeout(SPEAKER_SPIN_UP_TIME + .2);
+    }
+
+    public Command autoStopShootSequence() {
+        return (stopShootSequence()).withTimeout(.05);
+    }
+
+    public Command autoStartGroundIntakeSequence() {
+        return (startGroundIntakeSequence()).withTimeout(.05);
+    }
+
+    public Command autoStopGroundIntakeSequence() {
+        return (stopGroundIntakeSequence()).withTimeout(.3);
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 2.968062418292916,
+        "y": 5.549291973583948
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0426994353793066,
-        "y": 7.0
+        "x": 2.9771883193130795,
+        "y": 5.544715390278237
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 2.0667428040364557,
+        "y": 5.549291973583948
       },
       "prevControl": {
-        "x": 2.0,
-        "y": 7.004998507549833
+        "x": 2.0431523498993327,
+        "y": 5.5434377641354144
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,11 +39,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Test",
+  "folder": "TwoNoteCenter",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

@@ -1,0 +1,157 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3484431347393768,
+      "y": 5.549291973583948
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpeakerWallToSpeaker"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShootSpeakerSequence"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoStopShootSequence"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoStartGroundIntakeSequence"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CollectCenterNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterNoteToSpeaker"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoStopGroundIntakeSequence"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShootSpeakerSequence"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoStopShootSequence"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoStartGroundIntakeSequence"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpeakerToRightNote"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightNoteToSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoStopGroundIntakeSequence"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShootSpeakerSequence"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoStopShootSequence"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpeakerToCenterArena"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
