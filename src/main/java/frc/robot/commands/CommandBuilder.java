@@ -195,6 +195,14 @@ public class CommandBuilder {
         return (stopGroundIntakeSequence()).withTimeout(.3);
     }
 
+    public Command autoExtendFlappy() {
+        return extendFlappy().withTimeout(.05);
+    }
+
+    public Command autoRetractFlappy() {
+        return retractFlappy().withTimeout(.05);
+    }
+
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Getters for the subsystems
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~

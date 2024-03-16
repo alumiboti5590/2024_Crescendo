@@ -12,6 +12,24 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "autoExtendFlappy"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoRetractFlappy"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "SpeakerWallToSpeaker"

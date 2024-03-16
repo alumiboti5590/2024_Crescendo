@@ -111,18 +111,42 @@ public class RobotContainer {
         return autoChooser.getSelected();
     }
 
+    public double getXSpeedRaw() {
+        return driverController.getLeftY();
+    }
+
+    public double getYSpeedRaw() {
+        return driverController.getLeftX();
+    }
+
     public double getXSpeed() {
-        double val = driverController.getLeftY();
+        double val = getXSpeedRaw();
+        if (driverController.getAButton()) {
+            if (Math.abs(val) < Math.abs(getYSpeedRaw())) {
+                val = 0;
+            }
+        } else {
+            val *= .8;
+        }
+
         if (driverController.getLeftBumper()) {
-            val = -val / 1.5;
+            val = -val;
         }
         return val;
     }
 
     public double getYSpeed() {
-        double val = driverController.getLeftX();
+        double val = getYSpeedRaw();
+        if (driverController.getAButton()) {
+            if (Math.abs(val) < Math.abs(getXSpeedRaw())) {
+                val = 0;
+            }
+        } else {
+            val *= .8;
+        }
+
         if (driverController.getLeftBumper()) {
-            val = -val / 1.5;
+            val = -val;
         }
         return val;
     }
