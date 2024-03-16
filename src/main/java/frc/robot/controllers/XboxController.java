@@ -15,6 +15,8 @@ public class XboxController extends edu.wpi.first.wpilibj.XboxController {
     /** The minimum value needed by the left and right triggers to be considered "pressed" like a button */
     private double triggerAsTriggerDeadzones = .2;
 
+    private static final double POV_UP = 0, POV_RIGHT = 90, POV_DOWN = 180, POV_LEFT = 270;
+
     /**
      * Creates a new XboxController listener on the provided port. The port is managed by
      * the USB tab of the Driver Station, and you can 'Rescan' and 'Drag-n-Drop' reorder
@@ -162,5 +164,21 @@ public class XboxController extends edu.wpi.first.wpilibj.XboxController {
      */
     public Trigger getYButtonTrigger() {
         return new Trigger(this::getYButton);
+    }
+
+    public boolean getDPadUp() {
+        return getPOV() == POV_UP;
+    }
+
+    public boolean getDPadRight() {
+        return getPOV() == POV_RIGHT;
+    }
+
+    public boolean getDPadLeft() {
+        return getPOV() == POV_LEFT;
+    }
+
+    public boolean getDPadDown() {
+        return getPOV() == POV_DOWN;
     }
 }

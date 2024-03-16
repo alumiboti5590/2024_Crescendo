@@ -1,41 +1,20 @@
 /* 2024 Written by Alumiboti FRC 5590 */
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.ClimberConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.LoaderConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.CommandBuilder;
 import frc.robot.controllers.XboxController;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Flappy;
-import frc.robot.subsystems.Flappy.FlappyMode;
-import frc.robot.subsystems.Hook;
-import frc.robot.subsystems.Hook.HookMode;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Loader;
-import frc.robot.subsystems.Shooter;
-import java.util.List;
+import frc.robot.subsystems.SwerveDrive;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -44,15 +23,8 @@ import java.util.List;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    private static final double ZERO = 0.0;
-
-    private final DriveSubsystem robotDrive = new DriveSubsystem();
-    private final Hook hook = new Hook();
-    private final Climber climber = new Climber();
-    private final Intake intake = new Intake();
-    private final Loader loader = new Loader();
-    private final Shooter shooter = new Shooter();
-    private final Flappy flappy = new Flappy();
+    private final SendableChooser<Command> autoChooser;
+    private final CommandBuilder commands = new CommandBuilder();
 
     // The driver's controller
     XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -69,113 +41,65 @@ public class RobotContainer {
 
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
+        SwerveDrive swerveDrive = commands.getSwerveDrive();
         RunCommand swerveDriveCmd = new RunCommand(
-                () -> robotDrive.drive(
-                        -MathUtil.applyDeadband(driverController.getLeftY(), OIConstants.kDriveDeadband),
-                        -MathUtil.applyDeadband(driverController.getLeftX(), OIConstants.kDriveDeadband),
+                () -> swerveDrive.drive(
+                        -MathUtil.applyDeadband(getXSpeed(), OIConstants.kDriveDeadband),
+                        -MathUtil.applyDeadband(getYSpeed(), OIConstants.kDriveDeadband),
                         -MathUtil.applyDeadband(driverController.getRightX(), OIConstants.kDriveDeadband),
                         true,
                         true),
-                robotDrive);
-        robotDrive.setDefaultCommand(swerveDriveCmd);
+                swerveDrive);
+        swerveDrive.setDefaultCommand(swerveDriveCmd);
+
+        // This allows PathPlanner to call our actual commands
+        NamedCommands.registerCommands(commands.namedCommands());
+
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     /**
      * Use this method to define your button->command mappings. Buttons can be
-     * created by
-     * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
-     * subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling
-     * passing it to a
-     * {@link JoystickButton}.
+     * created by instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
+     * subclasses ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}),
+     * and then calling passing it to a {@link JoystickButton}.
      */
     private void configureButtonBindings() {
-        new JoystickButton(driverController, Button.kR1.value)
-                .whileTrue(new RunCommand(() -> robotDrive.setX(), robotDrive));
+        // Right Trigger on drive controller locks the drive wheels in place
+        new JoystickButton(driverController, Button.kR1.value).whileTrue(commands.plantDriveWheels());
 
-        // Basic Actions that the robot can take
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        Runnable startIntake = () -> intake.set(IntakeConstants.kIntakeSpeed),
-                startIntakeLoader = () -> loader.set(LoaderConstants.kIntakeSpeed),
-                startShooterLoader = () -> loader.set(LoaderConstants.kLoadShooterSpeed),
-                reverseLoader = () -> loader.set(LoaderConstants.kExhaustSpeed),
-                stopIntake = () -> intake.set(ZERO),
-                stopLoader = () -> loader.set(ZERO),
-                startShooterAmp = () -> shooter.set(ShooterConstants.kShootAmpSpeed),
-                startShooterSpeaker = () -> shooter.set(ShooterConstants.kShootSpeakerSpeed),
-                stopShooter = () -> shooter.set(ZERO),
-                reverseShooter = () -> shooter.set(ShooterConstants.kReverseSpeed),
-                startClimb = () -> climber.set(ClimberConstants.kClimbSpeed),
-                stopClimb = () -> climber.set(ZERO),
-                reverseClimb = () -> climber.set(ClimberConstants.kDispenseSpeed),
-                extendHook = () -> hook.set(HookMode.EXTEND),
-                retractHook = () -> hook.set(HookMode.RETRACT),
-                extendFlappy = () -> flappy.set(FlappyMode.EXTEND),
-                retractFlappy = () -> flappy.set(FlappyMode.RETRACT);
+        // Y button controls ground intake
+        operatorController.getYButtonTrigger().onTrue(commands.startGroundIntakeSequence());
+        operatorController.getYButtonTrigger().onFalse(commands.stopGroundIntakeSequence());
 
-        // Actions that combine to form sequences and Commands
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Left Bumper shoots speaker
+        operatorController.getLeftBumperTrigger().onTrue(commands.shootSpeakerSequence());
+        operatorController.getLeftBumperTrigger().onFalse(commands.stopShootSequence());
 
-        // Start the intake and the loader to pick up notes off the ground
-        Command startGroundIntake = run(startIntake, intake).alongWith(run(startIntakeLoader, loader));
-        // .unless(loader::isNoteLoaded);
-        // Stop the intake and feeder at the same time
-        Command stopGroundIntake = Commands.parallel(run(stopIntake, intake), run(stopLoader, loader))
-                .withTimeout(.1)
-                // Backfeed the shooter for a moment to prevent the note from getting
-                // stuck before launching it.
-                .andThen(run(reverseShooter, shooter)
-                        .alongWith(run(reverseLoader, loader))
-                        .withTimeout(.1))
-                .andThen(run(stopShooter, shooter).alongWith(run(stopLoader, loader)));
+        // Right bumper shoots amp
+        operatorController.getRightBumperTrigger().onTrue(commands.shootAmpSequence());
+        operatorController.getRightBumperTrigger().onFalse(commands.stopShootSequence());
 
-        // Start the shooter for a moment to spin up, then spin the loader to feed the note
-        Command shootSpeakerSequenceCmd =
-                run(startShooterSpeaker, shooter).withTimeout(1).andThen(run(startShooterLoader, loader));
-        Command shootAmpSequenceCmd =
-                run(startShooterAmp, shooter).withTimeout(.5).andThen(run(startShooterLoader, loader));
-        // Stop both the shooter and the feeder
-        Command stopShooterCmd = run(stopShooter, shooter).alongWith(run(stopLoader, loader));
+        // B button reverses the loader
+        operatorController.getBButtonTrigger().onTrue(commands.reverseLoader());
+        operatorController.getBButtonTrigger().onFalse(commands.stopLoader());
 
-        // Stop the loader
-        Command stopLoaderCmd = run(stopLoader, loader);
+        // X extends flappy, A retracts it
+        operatorController.getXButtonTrigger().onTrue(commands.extendFlappy());
+        operatorController.getAButtonTrigger().onTrue(commands.retractFlappy());
 
-        // Reverse the loader
-        Command reverseLoaderCmd = run(reverseLoader, loader);
+        // Start starts the climber
+        driverController.getStartButtonTrigger().onTrue(commands.startClimber());
+        driverController.getStartButtonTrigger().onFalse(commands.stopClimber());
 
-        // Start the climber
-        Command startClimberCmd = run(startClimb, climber);
+        // Back reverses the climber
+        driverController.getBackButtonTrigger().onTrue(commands.reverseClimber());
+        driverController.getBackButtonTrigger().onFalse(commands.stopClimber());
 
-        // Stop the climber
-        Command stopClimberCmd = run(stopClimb, climber);
-
-        // Reverse the climber
-        Command reverseClimberCmd = run(reverseClimb, climber);
-
-        // Loading from feeder system
-        operatorController.getYButtonTrigger().onTrue(startGroundIntake);
-        operatorController.getYButtonTrigger().onFalse(stopGroundIntake);
-
-        operatorController.getLeftBumperTrigger().onTrue(shootSpeakerSequenceCmd);
-        operatorController.getLeftBumperTrigger().onFalse(stopShooterCmd);
-
-        operatorController.getRightBumperTrigger().onTrue(shootAmpSequenceCmd);
-        operatorController.getRightBumperTrigger().onFalse(stopShooterCmd);
-
-        operatorController.getBButtonTrigger().onTrue(reverseLoaderCmd);
-        operatorController.getBButtonTrigger().onFalse(stopLoaderCmd);
-
-        operatorController.getXButtonTrigger().onTrue(run(extendFlappy, flappy));
-        operatorController.getAButtonTrigger().onTrue(run(retractFlappy, flappy));
-
-        driverController.getStartButtonTrigger().onTrue(startClimberCmd);
-        driverController.getStartButtonTrigger().onFalse(stopClimberCmd);
-
-        driverController.getBackButtonTrigger().onTrue(reverseClimberCmd);
-        driverController.getBackButtonTrigger().onFalse(stopClimberCmd);
-
-        driverController.getXButtonTrigger().onTrue(run(extendHook, hook));
-        driverController.getYButtonTrigger().onTrue(run(retractHook, hook));
+        // X extends the hook, Y retracts the hook
+        driverController.getXButtonTrigger().onTrue(commands.extendHook());
+        driverController.getYButtonTrigger().onTrue(commands.retractHook());
     }
 
     /**
@@ -184,46 +108,46 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // Create config for trajectory
-        TrajectoryConfig config = new TrajectoryConfig(
-                        AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                // Add kinematics to ensure max speed is actually obeyed
-                .setKinematics(DriveConstants.kDriveKinematics);
-
-        // An example trajectory to follow. All units in meters.
-        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these two interior waypoints, making an 's' curve path
-                List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-                // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(3, 0, new Rotation2d(0)),
-                config);
-
-        var thetaController = new ProfiledPIDController(
-                AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                exampleTrajectory,
-                robotDrive::getPose, // Functional interface to feed supplier
-                DriveConstants.kDriveKinematics,
-
-                // Position controllers
-                new PIDController(AutoConstants.kPXController, 0, 0),
-                new PIDController(AutoConstants.kPYController, 0, 0),
-                thetaController,
-                robotDrive::setModuleStates,
-                robotDrive);
-
-        // Reset odometry to the starting pose of the trajectory.
-        robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-
-        // Run path following command, then stop at the end.
-        return swerveControllerCommand.andThen(() -> robotDrive.drive(0, 0, 0, false, false));
+        return autoChooser.getSelected();
     }
 
-    private static Command run(Runnable action, Subsystem... subsystems) {
-        return new RunCommand(action, subsystems);
+    public double getXSpeedRaw() {
+        return driverController.getLeftY();
+    }
+
+    public double getYSpeedRaw() {
+        return driverController.getLeftX();
+    }
+
+    public double getXSpeed() {
+        double val = getXSpeedRaw();
+        if (driverController.getAButton()) {
+            if (Math.abs(val) < Math.abs(getYSpeedRaw())) {
+                val = 0;
+            }
+        } else {
+            val *= .8;
+        }
+
+        if (driverController.getLeftBumper()) {
+            val = -val;
+        }
+        return val;
+    }
+
+    public double getYSpeed() {
+        double val = getYSpeedRaw();
+        if (driverController.getAButton()) {
+            if (Math.abs(val) < Math.abs(getXSpeedRaw())) {
+                val = 0;
+            }
+        } else {
+            val *= .8;
+        }
+
+        if (driverController.getLeftBumper()) {
+            val = -val;
+        }
+        return val;
     }
 }
