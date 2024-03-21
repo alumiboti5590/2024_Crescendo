@@ -140,6 +140,10 @@ public class CommandBuilder {
         return new RunCommand(() -> swerveDrive.setX(), swerveDrive);
     }
 
+    public Command resetHeading() {
+        return new RunCommand(() -> swerveDrive.zeroHeading(), swerveDrive).withTimeout(.05);
+    }
+
     // ~~~~~~~~~~~~~~~~~
     // Complex Sequences
     // ~~~~~~~~~~~~~~~~~

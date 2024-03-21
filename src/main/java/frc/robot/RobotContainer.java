@@ -47,7 +47,7 @@ public class RobotContainer {
                         -MathUtil.applyDeadband(getXSpeed(), OIConstants.kDriveDeadband),
                         -MathUtil.applyDeadband(getYSpeed(), OIConstants.kDriveDeadband),
                         -MathUtil.applyDeadband(driverController.getRightX(), OIConstants.kDriveDeadband),
-                        true,
+                        !driverController.getLeftTriggerPressed(),
                         true),
                 swerveDrive);
         swerveDrive.setDefaultCommand(swerveDriveCmd);
@@ -100,6 +100,9 @@ public class RobotContainer {
         // X extends the hook, Y retracts the hook
         driverController.getXButtonTrigger().onTrue(commands.extendHook());
         driverController.getYButtonTrigger().onTrue(commands.retractHook());
+
+        // B resets the heading if field relative drive starts drifting
+        driverController.getBButtonTrigger().onTrue(commands.resetHeading());
     }
 
     /**
